@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cercle Lyon Story</title>
+<style>
+:root {
+  --fond: #eef2f6; --encre: #14213d; --doux: #5b6779; --accent: #0f766e;
+  --accent-fonce: #0b5a54; --ambre: #f2a93b; --carte: #ffffff; --bord: #d7dee7; --erreur: #b3261e;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--fond); color: var(--encre); line-height: 1.5; }
+h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; margin: 0; }
+.ecran { display: none; min-height: 100vh; }
+.ecran.actif { display: block; }
+#ecran-auth { padding: 24px 18px; }
+.auth-boite { max-width: 420px; margin: 0 auto; padding-top: 6vh; }
+.logo { font-family: Georgia, serif; font-size: 2rem; color: var(--encre); }
+.slogan { color: var(--doux); margin: 4px 0 24px; }
+.carte { background: var(--carte); border: 1px solid var(--bord); border-radius: 14px; padding: 22px; }
+.onglets { display: flex; gap: 8px; margin-bottom: 18px; }
+.onglets button { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--bord); background: transparent; font-size: 1rem; cursor: pointer; color: var(--doux); }
+.onglets button.actif { background: var(--encre); color: #fff; border-color: var(--encre); }
+label { display: block; font-size: .9rem; margin: 12px 0 4px; }
+input[type=text], input[type=email], input[type=password] { width: 100%; padding: 12px; font-size: 1rem; border-radius: 10px; border: 1px solid var(--bord); background: #fff; color: var(--encre); }
+input:focus, button:focus-visible { outline: 3px solid var(--ambre); outline-offset: 1px; }
+.bouton { width: 100%; margin-top: 18px; padding: 13px; font-size: 1rem; font-weight: 600; border: 0; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+.bouton:hover { background: var(--accent-fonce); }
+.bouton:disabled { opacity: .6; cursor: wait; }
+.message { margin-top: 14px; font-size: .95rem; min-height: 1.4em; }
+.message.erreur { color: var(--erreur); }
+.message.ok { color: var(--accent-fonce); }
+.barre { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--encre); color: #fff; }
+.barre .logo { color: #fff; font-size: 1.3rem; }
+.barre button { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.4); border-radius: 8px; padding: 7px 12px; cursor: pointer; font-size: .9rem; }
+.contenu { max-width: 720px; margin: 0 auto; padding: 24px 18px 48px; }
+.bienvenue h2 { font-size: 1.7rem; }
+.bienvenue p { color: var(--doux); margin: 6px 0 22px; }
+.salons { display: grid; gap: 12px; }
+.salon { text-align: left; background: var(--carte); border: 1px solid var(--bord); border-left: 6px solid var(--accent); border-radius: 12px; padding: 16px; cursor: pointer; font: inherit; color: inherit; width: 100%; }
+.salon:hover { border-left-color: var(--ambre); }
+.salon h3 { font-size: 1.15rem; }
+.salon span { color: var(--doux); font-size: .92rem; }
+.retour { background: none; border: 0; color: var(--accent-fonce); cursor: pointer; font-size: 1rem; padding: 0; margin-bottom: 16px; }
+#vue-salon { display: none; }
+.vide { background: var(--carte); border: 1px dashed var(--bord); border-radius: 12px; padding: 22px; color: var(--doux); }
+.fil { background: var(--carte); border: 1px solid var(--bord); border-radius: 12px; height: 52vh; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 85%; background: #eef2f6; border-radius: 12px; padding: 8px 12px; align-self: flex-start; }
+.msg.moi { align-self: flex-end; background: #d6efec; }
+.msg .qui { font-size: .78rem; color: var(--doux); margin-bottom: 2px; }
+.msg .texte { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere; }
+.saisie { display: flex; gap: 8px; margin-top: 12px; }
+.saisie input { flex: 1; }
+.saisie button { width: auto; margin-top: 0; padding: 0 18px; }
+.erreur-chat { color: var(--erreur); font-size: .9rem; min-height: 1.3em; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div id="ecran-auth" class="ecran actif">
+  <div class="auth-boite">
+    <div class="logo" data-nom-site>Cercle Lyon Story</div>
+    <p class="slogan">Discute, partage, apprends avec la communauté.</p>
+    <div class="carte">
+      <div class="onglets">
+        <button id="onglet-inscription" class="actif" type="button">Créer un compte</button>
+        <button id="onglet-connexion" type="button">Se connecter</button>
+      </div>
+      <div id="champ-pseudo">
+        <label for="pseudo">Pseudo</label>
+        <input id="pseudo" type="text" autocomplete="nickname" placeholder="Ex : Smith">
+      </div>
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email" autocomplete="email" placeholder="toi@exemple.com">
+      <label for="mdp">Mot de passe (6 caractères minimum)</label>
+      <input id="mdp" type="password" autocomplete="current-password">
+      <button id="valider" class="bouton" type="button">Créer mon compte</button>
+      <div id="message" class="message" role="status"></div>
+    </div>
+  </div>
+</div>
+
+<div id="ecran-accueil" class="ecran">
+  <div class="barre">
+    <div class="logo" data-nom-site>Cercle Lyon Story</div>
+    <button id="deconnexion" type="button">Se déconnecter</button>
+  </div>
+  <div class="contenu">
+    <div id="vue-liste">
+      <div class="bienvenue">
+        <h2 id="titre-bienvenue">Bienvenue</h2>
+        <p>Choisis un salon pour commencer à discuter.</p>
+      </div>
+      <div class="salons" id="liste-salons"></div>
+    </div>
+    <div id="vue-salon">
+      <button class="retour" id="retour" type="button">← Tous les salons</button>
+      <h2 id="salon-titre"></h2>
+      <p id="salon-desc" style="color:var(--doux)"></p>
+      <div id="messages" class="fil"><div class="vide" id="aucun-message">Aucun message pour l'instant. Écris le premier !</div></div>
+      <div class="saisie">
+        <input id="saisie" type="text" maxlength="1000" placeholder="Écris ton message…" autocomplete="off">
+        <button id="envoyer" class="bouton" type="button">Envoyer</button>
+      </div>
+      <div id="erreur-chat" class="erreur-chat" role="status"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const NOM_DU_SITE = "Cercle Lyon Story";
+const SUPABASE_URL = "https://pobiuxdvnvrujiibqxly.supabase.co";
+const SUPABASE_CLE = "sb_publishable_UCW2vqUNs5avINk3eRH6xQ_J7B-V2Hp";
+
+const SALONS = [
+  { id: "amour", nom: "Amour et relations", desc: "Parler de cœur, de couple, de rencontres." },
+  { id: "entrepreneuriat", nom: "Entrepreneuriat", desc: "Idées, projets, conseils pour se lancer." },
+  { id: "quotidien", nom: "Vie quotidienne", desc: "Astuces et conseils du jour le jour." },
+  { id: "histoires", nom: "Histoires marquantes", desc: "Grandes figures, grandes affaires, récits qui marquent." }
+];
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_CLE);
+const $ = (id) => document.getElementById(id);
+let modeInscription = true;
+let moi = null;
+let salonActuel = null;
+let canal = null;
+const dejaVus = new Set();
+
+document.title = NOM_DU_SITE;
+document.querySelectorAll("[data-nom-site]").forEach(e => e.textContent = NOM_DU_SITE);
+
+function afficherMessage(texte, type) {
+  const m = $("message");
+  m.textContent = texte;
+  m.className = "message " + (type || "");
+}
+
+function choisirMode(inscription) {
+  modeInscription = inscription;
+  $("onglet-inscription").classList.toggle("actif", inscription);
+  $("onglet-connexion").classList.toggle("actif", !inscription);
+  $("champ-pseudo").style.display = inscription ? "block" : "none";
+  $("valider").textContent = inscription ? "Créer mon compte" : "Me connecter";
+  $("mdp").autocomplete = inscription ? "new-password" : "current-password";
+  afficherMessage("");
+}
+
+function montrerAccueil(utilisateur) {
+  moi = utilisateur;
+  const pseudo = (utilisateur.user_metadata && utilisateur.user_metadata.pseudo) || utilisateur.email.split("@")[0];
+  $("titre-bienvenue").textContent = "Bienvenue, " + pseudo + " !";
+  $("ecran-auth").classList.remove("actif");
+  $("ecran-accueil").classList.add("actif");
+  history.replaceState({ liste: true }, "", location.pathname + location.search);
+  montrerListe();
+}
+
+function montrerAuth() {
+  $("ecran-accueil").classList.remove("actif");
+  $("ecran-auth").classList.add("actif");
+}
+
+function quitterSalon() {
+  if (canal) { db.removeChannel(canal); canal = null; }
+  salonActuel = null;
+}
+
+function montrerListe() {
+  quitterSalon();
+  $("vue-salon").style.display = "none";
+  $("vue-liste").style.display = "block";
+}
+
+function defiler() {
+  const z = $("messages");
+  z.scrollTop = z.scrollHeight;
+}
+
+function ajouterMessage(m) {
+  if (dejaVus.has(m.id)) return;
+  dejaVus.add(m.id);
+  const vide = $("aucun-message");
+  if (vide) vide.remove();
+  const div = document.createElement("div");
+  div.className = "msg" + (moi && m.auteur_id === moi.id ? " moi" : "");
+  const qui = document.createElement("div");
+  qui.className = "qui";
+  const heure = new Date(m.cree_le).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  qui.textContent = m.pseudo + " – " + heure;
+  const texte = document.createElement("div");
+  texte.className = "texte";
+  texte.textContent = m.contenu;
+  div.appendChild(qui);
+  div.appendChild(texte);
+  $("messages").appendChild(div);
+  defiler();
+}
+
+async function ouvrirSalon(salon) {
+  quitterSalon();
+  salonActuel = salon;
+  dejaVus.clear();
+  $("salon-titre").textContent = salon.nom;
+  $("salon-desc").textContent = salon.desc;
+  $("erreur-chat").textContent = "";
+  $("messages").innerHTML = '<div class="vide" id="aucun-message">Chargement des messages…</div>';
+  $("vue-liste").style.display = "none";
+  $("vue-salon").style.display = "block";
+  window.scrollTo(0, 0);
+
+  const { data, error } = await db.from("messages_salon").select("*")
+    .eq("salon", salon.id).order("cree_le", { ascending: true }).limit(100);
+  if (salonActuel !== salon) return;
+  if (error) {
+    $("messages").innerHTML = "";
+    $("erreur-chat").textContent = "Impossible de charger les messages : " + error.message;
+  } else if (data.length === 0) {
+    $("aucun-message").textContent = "Aucun message pour l'instant. Écris le premier !";
+  } else {
+    data.forEach(ajouterMessage);
+  }
+
+  canal = db.channel("salon-" + salon.id)
+    .on("postgres_changes",
+      { event: "INSERT", schema: "public", table: "messages_salon", filter: "salon=eq." + salon.id },
+      (p) => ajouterMessage(p.new))
+    .subscribe();
+}
+
+async function envoyer() {
+  const champ = $("saisie");
+  const texte = champ.value.trim();
+  if (!texte || !salonActuel) return;
+  champ.value = "";
+  const { data, error } = await db.from("messages_salon")
+    .insert({ salon: salonActuel.id, contenu: texte }).select().single();
+  if (error) {
+    champ.value = texte;
+    $("erreur-chat").textContent = "Message non envoyé : " + error.message;
+    return;
+  }
+  $("erreur-chat").textContent = "";
+  ajouterMessage(data);
+}
+
+// Liste des salons : on ajoute une étape dans l'historique en entrant dans un salon
+const zone = $("liste-salons");
+SALONS.forEach(s => {
+  const b = document.createElement("button");
+  b.className = "salon";
+  b.type = "button";
+  b.innerHTML = "<h3></h3><span></span>";
+  b.querySelector("h3").textContent = s.nom;
+  b.querySelector("span").textContent = s.desc;
+  b.addEventListener("click", () => {
+    history.pushState({ salon: s.id }, "", "#" + s.id);
+    ouvrirSalon(s);
+  });
+  zone.appendChild(b);
+});
+
+// Bouton retour du téléphone ou du navigateur : revenir à la liste, sans quitter le site
+window.addEventListener("popstate", (e) => {
+  if (!moi) return;
+  const s = e.state && e.state.salon ? SALONS.find(x => x.id === e.state.salon) : null;
+  if (s) ouvrirSalon(s); else montrerListe();
+});
+
+$("retour").addEventListener("click", () => {
+  if (history.state && history.state.salon) history.back(); else montrerListe();
+});
+
+$("onglet-inscription").addEventListener("click", () => choisirMode(true));
+$("onglet-connexion").addEventListener("click", () => choisirMode(false));
+$("envoyer").addEventListener("click", envoyer);
+$("saisie").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); envoyer(); } });
+
+$("valider").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  const mdp = $("mdp").value;
+  const pseudo = $("pseudo").value.trim();
+  if (!email || !mdp) return afficherMessage("Remplis ton e-mail et ton mot de passe.", "erreur");
+  if (mdp.length < 6) return afficherMessage("Le mot de passe doit avoir au moins 6 caractères.", "erreur");
+  if (modeInscription && !pseudo) return afficherMessage("Choisis un pseudo.", "erreur");
+  $("valider").disabled = true;
+  afficherMessage("Un instant…");
+  try {
+    if (modeInscription) {
+      const { data, error } = await db.auth.signUp({ email, password: mdp, options: { data: { pseudo } } });
+      if (error) throw error;
+      if (data.session) {
+        montrerAccueil(data.user);
+      } else {
+        afficherMessage("Compte créé. Il reste à confirmer l'e-mail avant de te connecter.", "ok");
+      }
+    } else {
+      const { data, error } = await db.auth.signInWithPassword({ email, password: mdp });
+      if (error) throw error;
+      montrerAccueil(data.user);
+    }
+  } catch (e) {
+    let texte = e.message || "Une erreur est survenue.";
+    if (/already registered/i.test(texte)) texte = "Cet e-mail a déjà un compte. Va sur « Se connecter ».";
+    else if (/invalid login/i.test(texte)) texte = "E-mail ou mot de passe incorrect.";
+    else if (/not confirmed/i.test(texte)) texte = "Ce compte n'a pas été confirmé par e-mail. Crée un nouveau compte avec une autre adresse.";
+    afficherMessage(texte, "erreur");
+  } finally {
+    $("valider").disabled = false;
+  }
+});
+
+$("deconnexion").addEventListener("click", async () => {
+  quitterSalon();
+  await db.auth.signOut();
+  moi = null;
+  montrerAuth();
+  choisirMode(false);
+});
+
+db.auth.getSession().then(({ data }) => {
+  if (data.session) montrerAccueil(data.session.user);
+});
+</script>
+</body>
+  </html>
