@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cercle Lyon Story – Salons</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:system-ui,sans-serif;background:#f4f1ec;color:#222;display:flex;flex-direction:column}
+header{background:#1f2a44;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:17px}
+header a{color:#ffd9a0;font-size:14px;text-decoration:none}
+nav{display:flex;gap:8px;overflow-x:auto;padding:10px;background:#e8e2d8}
+nav button{border:0;border-radius:18px;padding:8px 14px;background:#fff;font-size:14px;white-space:nowrap;cursor:pointer}
+nav button.on{background:#c8501e;color:#fff}
+#msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:85%;padding:8px 12px;border-radius:14px;background:#fff;align-self:flex-start;word-wrap:break-word}
+.m.moi{align-self:flex-end;background:#ffe3cf}
+.m b{display:block;font-size:12px;color:#c8501e;margin-bottom:2px}
+.m small{display:block;font-size:11px;color:#888;margin-top:3px}
+#vide{text-align:center;color:#777;margin-top:30px}
+form{display:flex;gap:8px;padding:10px;background:#fff;border-top:1px solid #ddd}
+input{flex:1;padding:12px;border:1px solid #ccc;border-radius:22px;font-size:16px}
+form button{border:0;border-radius:22px;padding:0 20px;background:#c8501e;color:#fff;font-size:15px}
+</style>
+</head>
+<body>
+<header><h1>Cercle Lyon Story</h1><a href="index.html">Accueil</a></header>
+<nav id="nav"></nav>
+<div id="msgs"></div>
+<form id="f">
+  <input id="txt" placeholder="Écris ton message…" maxlength="1000" autocomplete="off">
+  <button type="submit">Envoyer</button>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const sb = supabase.createClient(
+  "https://pobiuxdvnvrujiibqxly.supabase.co",
+  "sb_publishable_UCW2vqUNs5avINk3eRH6xQ_J7B-V2Hp"
+);
+const SALONS = [
+  {id:"amour", nom:"Amour ❤️"},
+  {id:"entrepreneuriat", nom:"Entrepreneuriat"},
+  {id:"vie-quotidienne", nom:"Vie quotidienne"},
+  {id:"histoire", nom:"Histoires marquantes"}
+];
+let user, pseudo, salon, canal, vus = new Set();
+const $ = id => document.getElementById(id);
+
+function afficher(m){
+  if (vus.has(m.id)) return;
+  vus.add(m.id);
+  $("vide") && $("vide").remove();
+  const d = document.createElement("div");
+  d.className = "m" + (m.user_id === user.id ? " moi" : "");
+  const b = document.createElement("b"); b.textContent = m.pseudo;
+  const p = document.createElement("span"); p.textContent = m.contenu;
+  const s = document.createElement("small");
+  s.textContent = new Date(m.created_at).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  d.append(b,p,s);
+  const z = $("msgs");
+  z.appendChild(d);
+  z.scrollTop = z.scrollHeight;
+}
+
+async function ouvrir(id){
+  salon = id; vus = new Set();
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+  $("msgs").innerHTML = '<p id="vide">Chargement…</p>';
+  if (canal) sb.removeChannel(canal);
+  const { data, error } = await sb.from("messages_salon").select("*")
+    .eq("salon", id).order("created_at",{ascending:true}).limit(100);
+  $("msgs").innerHTML = "";
+  if (error) { $("msgs").innerHTML = '<p id="vide">Erreur : ' + error.message + '</p>'; return; }
+  if (!data.length) $("msgs").innerHTML = '<p id="vide">Aucun message ici. Écris le premier !</p>';
+  data.forEach(afficher);
+  canal = sb.channel("salon-" + id)
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages_salon",filter:"salon=eq."+id},
+        p => afficher(p.new))
+    .subscribe();
+}
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const t = $("txt").value.trim();
+  if (!t) return;
+  $("txt").value = "";
+  const { data, error } = await sb.from("messages_salon")
+    .insert({ salon, pseudo, contenu: t }).select().single();
+  if (error) { alert("Message non envoyé : " + error.message); $("txt").value = t; return; }
+  afficher(data);
+});
+
+(async () => {
+  const { data } = await sb.auth.getSession();
+  if (!data.session) { location.href = "index.html"; return; }
+  user = data.session.user;
+  const md = user.user_metadata || {};
+  pseudo = md.pseudo || md.username || md.full_name || md.name || (user.email || "Membre").split("@")[0];
+  SALONS.forEach(s => {
+    const b = document.createElement("button");
+    b.textContent = s.nom; b.dataset.id = s.id;
+    b.onclick = () => ouvrir(s.id);
+    $("nav").appendChild(b);
+  });
+  const demande = new URLSearchParams(location.search).get("salon");
+  ouvrir(SALONS.some(s => s.id === demande) ? demande : SALONS[0].id);
+})();
+</script>
+</body>
+</html>
