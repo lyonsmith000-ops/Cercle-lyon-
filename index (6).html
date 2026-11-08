@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+<meta name="theme-color" content="#12203b">
+<title>Cercle Lyon Story</title>
+<style>
+:root {
+  --fond: #eef2f7; --carte: #ffffff; --encre: #12203b; --doux: #566378; --bord: #d5dde8;
+  --marine: #12203b; --accent: #0f766e; --lien: #0b5a54; --ambre: #f2a93b; --erreur: #b3261e;
+  --bulle: #e3e9f1; --moi: #0f766e;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #0c1424; --carte: #151f35; --encre: #e8edf6; --doux: #9fabc0; --bord: #27344f;
+    --marine: #09101e; --lien: #5eead4; --erreur: #ff9a90; --bulle: #1f2b45;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--fond); color: var(--encre); line-height: 1.5; }
+h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; margin: 0; }
+button, input { font: inherit; }
+.ecran { display: none; min-height: 100vh; }
+.ecran.actif { display: block; }
+
+/* Logo : un cercle avec un point, comme une personne qui rejoint le cercle */
+.logo { display: flex; align-items: center; gap: 10px; font-family: Georgia, serif; font-weight: 700; }
+.marque { position: relative; flex: none; width: 26px; height: 26px; border: 3px solid var(--ambre); border-radius: 50%; }
+.marque::after { content: ""; position: absolute; width: 11px; height: 11px; left: 14px; top: -6px; border-radius: 50%; background: #5eead4; border: 2px solid var(--marine); }
+
+/* Écran de connexion */
+.auth-tete { position: relative; overflow: hidden; background: var(--marine); color: #fff; padding: 46px 22px 88px; }
+.auth-tete::before { content: ""; position: absolute; right: -60px; top: -60px; width: 190px; height: 190px; border-radius: 50%; border: 2px solid rgba(255,255,255,.18); box-shadow: 0 0 0 34px rgba(255,255,255,.05), 0 0 0 68px rgba(255,255,255,.035); }
+.auth-tete > * { position: relative; max-width: 440px; margin-left: auto; margin-right: auto; }
+.auth-tete .logo { font-size: 1.7rem; color: #fff; }
+.slogan { margin-top: 10px; margin-bottom: 0; color: #c5d0e2; font-size: 1.05rem; }
+.auth-boite { position: relative; max-width: 440px; margin: -54px auto 0; padding: 0 16px 40px; }
+.carte { background: var(--carte); border: 1px solid var(--bord); border-radius: 18px; padding: 22px; box-shadow: 0 8px 28px rgba(8, 16, 34, .16); }
+.onglets { display: flex; gap: 4px; padding: 4px; margin-bottom: 18px; background: var(--fond); border-radius: 12px; }
+.onglets button { flex: 1; padding: 10px; border: 0; border-radius: 9px; background: transparent; color: var(--doux); font-size: 1rem; cursor: pointer; }
+.onglets button.actif { background: var(--carte); color: var(--encre); font-weight: 600; box-shadow: 0 1px 3px rgba(8, 16, 34, .18); }
+label { display: block; font-size: .9rem; font-weight: 600; margin: 14px 0 6px; }
+input[type=text], input[type=email], input[type=password] { width: 100%; min-height: 48px; padding: 10px 14px; font-size: 1rem; border-radius: 12px; border: 1px solid var(--bord); background: var(--carte); color: var(--encre); }
+input::placeholder { color: var(--doux); opacity: .8; }
+input:focus-visible, button:focus-visible { outline: 3px solid var(--ambre); outline-offset: 2px; }
+.bouton { width: 100%; min-height: 48px; margin-top: 20px; padding: 12px; font-size: 1rem; font-weight: 600; border: 0; border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer; }
+.bouton:hover { filter: brightness(1.12); }
+.bouton:active { transform: scale(.98); }
+.bouton:disabled { opacity: .6; cursor: wait; }
+.message { margin-top: 14px; font-size: .95rem; min-height: 1.4em; }
+.message.erreur { color: var(--erreur); }
+.message.ok { color: var(--lien); }
+
+/* Barre du haut et liste des salons */
+.barre { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 16px; background: var(--marine); color: #fff; }
+.barre .logo { font-size: 1.2rem; color: #fff; }
+.barre button { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: .9rem; }
+.contenu { max-width: 720px; margin: 0 auto; padding: 26px 16px 48px; }
+.contenu.plein { height: calc(100vh - 56px); height: calc(100dvh - 56px); padding: 0; }
+.bienvenue h2 { font-size: 1.7rem; line-height: 1.2; }
+.bienvenue p { color: var(--doux); margin: 6px 0 22px; }
+.salons { display: grid; gap: 12px; }
+.salon { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: var(--carte); border: 1px solid var(--bord); border-radius: 16px; padding: 14px; cursor: pointer; color: inherit; transition: border-color .15s, transform .1s; }
+.salon:hover { border-color: var(--c); }
+.salon:active { transform: scale(.985); }
+.salon .texte { display: block; flex: 1; min-width: 0; }
+.salon h3 { font-size: 1.1rem; line-height: 1.25; }
+.salon .desc { display: block; color: var(--doux); font-size: .9rem; margin-top: 2px; }
+.salon .fleche { flex: none; color: var(--doux); font-size: 1.5rem; line-height: 1; }
+.pastille { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; font-size: 1.5rem; border: 2px solid var(--c); background: var(--carte); background: color-mix(in srgb, var(--c) 16%, var(--carte)); }
+
+/* Vue d'un salon : en-tête, messages qui défilent, zone de saisie en bas */
+#vue-salon { display: none; flex-direction: column; height: 100%; }
+.salon-tete { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--carte); border-bottom: 1px solid var(--bord); }
+.salon-tete .pastille { width: 42px; height: 42px; font-size: 1.25rem; }
+.salon-tete .infos { flex: 1; min-width: 0; }
+.salon-tete h2 { font-size: 1.1rem; line-height: 1.25; }
+.salon-tete p { margin: 0; color: var(--doux); font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.retour { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--bord); background: transparent; color: var(--encre); font-size: 1.2rem; cursor: pointer; }
+.fil { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.vide { margin: auto; max-width: 300px; padding: 24px; text-align: center; color: var(--doux); }
+.msg { display: flex; align-items: flex-end; gap: 8px; max-width: 88%; align-self: flex-start; }
+.msg.moi { align-self: flex-end; flex-direction: row-reverse; }
+.avatar { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: #fff; font-weight: 700; font-size: .9rem; }
+.bulle { min-width: 0; padding: 8px 13px; background: var(--bulle); border-radius: 16px 16px 16px 4px; }
+.msg.moi .bulle { background: var(--moi); color: #fff; border-radius: 16px 16px 4px 16px; }
+.qui { font-size: .78rem; color: var(--doux); margin-bottom: 2px; }
+.qui .nom { font-weight: 700; }
+.qui .heure { margin-left: 6px; opacity: .75; }
+.msg.moi .qui { color: rgba(255,255,255,.8); text-align: right; }
+.msg .texte { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere; }
+.erreur-chat { padding: 6px 14px 0; background: var(--carte); color: var(--erreur); font-size: .9rem; }
+.erreur-chat:empty { display: none; }
+.saisie { display: flex; gap: 8px; padding: 10px 12px; background: var(--carte); border-top: 1px solid var(--bord); }
+.saisie input { flex: 1; min-width: 0; border-radius: 999px; padding-left: 18px; }
+.saisie .bouton { width: auto; margin: 0; padding: 0 20px; border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div id="ecran-auth" class="ecran actif">
+  <header class="auth-tete">
+    <div class="logo"><span class="marque" aria-hidden="true"></span><span data-nom-site>Cercle Lyon Story</span></div>
+    <p class="slogan">Discute, partage, apprends avec la communauté.</p>
+  </header>
+  <main class="auth-boite">
+    <div class="carte">
+      <div class="onglets">
+        <button id="onglet-inscription" class="actif" type="button">Créer un compte</button>
+        <button id="onglet-connexion" type="button">Se connecter</button>
+      </div>
+      <div id="champ-pseudo">
+        <label for="pseudo">Pseudo</label>
+        <input id="pseudo" type="text" autocomplete="nickname" placeholder="Ex : Smith">
+      </div>
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email" autocomplete="email" placeholder="toi@exemple.com">
+      <label for="mdp">Mot de passe (6 caractères minimum)</label>
+      <input id="mdp" type="password" autocomplete="current-password">
+      <button id="valider" class="bouton" type="button">Créer mon compte</button>
+      <div id="message" class="message" role="status"></div>
+    </div>
+  </main>
+</div>
+
+<div id="ecran-accueil" class="ecran">
+  <div class="barre">
+    <div class="logo"><span class="marque" aria-hidden="true"></span><span data-nom-site>Cercle Lyon Story</span></div>
+    <button id="deconnexion" type="button">Se déconnecter</button>
+  </div>
+  <div class="contenu" id="contenu">
+    <div id="vue-liste">
+      <div class="bienvenue">
+        <h2 id="titre-bienvenue">Bienvenue</h2>
+        <p>Choisis un salon pour commencer à discuter.</p>
+      </div>
+      <div class="salons" id="liste-salons"></div>
+    </div>
+    <div id="vue-salon">
+      <div class="salon-tete">
+        <button class="retour" id="retour" type="button" aria-label="Retour à tous les salons">←</button>
+        <span class="pastille" id="salon-pastille" aria-hidden="true"></span>
+        <div class="infos">
+          <h2 id="salon-titre"></h2>
+          <p id="salon-desc"></p>
+        </div>
+      </div>
+      <div id="messages" class="fil"><div class="vide" id="aucun-message"></div></div>
+      <div id="erreur-chat" class="erreur-chat" role="status"></div>
+      <div class="saisie">
+        <input id="saisie" type="text" maxlength="1000" placeholder="Écris ton message…" autocomplete="off">
+        <button id="envoyer" class="bouton" type="button">Envoyer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const NOM_DU_SITE = "Cercle Lyon Story";
+const SUPABASE_URL = "https://pobiuxdvnvrujiibqxly.supabase.co";
+const SUPABASE_CLE = "sb_publishable_UCW2vqUNs5avINk3eRH6xQ_J7B-V2Hp";
+
+const SALONS = [
+  { id: "amour", nom: "Amour et relations", desc: "Parler de cœur, de couple, de rencontres.", icone: "💞", couleur: "#be185d",
+    amorce: "Quel est le meilleur conseil que tu aies reçu sur le couple ?" },
+  { id: "entrepreneuriat", nom: "Entrepreneuriat", desc: "Idées, projets, conseils pour se lancer.", icone: "🚀", couleur: "#b45309",
+    amorce: "Quel projet aimerais-tu lancer, et qu'est-ce qui te bloque ?" },
+  { id: "quotidien", nom: "Vie quotidienne", desc: "Astuces et conseils du jour le jour.", icone: "☀️", couleur: "#0f766e",
+    amorce: "Quelle astuce te fait gagner du temps chaque jour ?" },
+  { id: "histoires", nom: "Histoires marquantes", desc: "Grandes figures, grandes affaires, récits qui marquent.", icone: "📖", couleur: "#4338ca",
+    amorce: "Quelle histoire vraie t'a le plus marqué ?" }
+];
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_CLE);
+const $ = (id) => document.getElementById(id);
+let modeInscription = true;
+let moi = null;
+let salonActuel = null;
+let canal = null;
+const dejaVus = new Set();
+
+document.title = NOM_DU_SITE;
+document.querySelectorAll("[data-nom-site]").forEach(e => e.textContent = NOM_DU_SITE);
+
+function afficherMessage(texte, type) {
+  const m = $("message");
+  m.textContent = texte;
+  m.className = "message " + (type || "");
+}
+
+function choisirMode(inscription) {
+  modeInscription = inscription;
+  $("onglet-inscription").classList.toggle("actif", inscription);
+  $("onglet-connexion").classList.toggle("actif", !inscription);
+  $("champ-pseudo").style.display = inscription ? "block" : "none";
+  $("valider").textContent = inscription ? "Créer mon compte" : "Me connecter";
+  $("mdp").autocomplete = inscription ? "new-password" : "current-password";
+  afficherMessage("");
+}
+
+function montrerAccueil(utilisateur) {
+  moi = utilisateur;
+  const pseudo = (utilisateur.user_metadata && utilisateur.user_metadata.pseudo) || utilisateur.email.split("@")[0];
+  $("titre-bienvenue").textContent = "Bienvenue, " + pseudo + " !";
+  $("ecran-auth").classList.remove("actif");
+  $("ecran-accueil").classList.add("actif");
+  history.replaceState({ liste: true }, "", location.pathname + location.search);
+  montrerListe();
+}
+
+function montrerAuth() {
+  $("ecran-accueil").classList.remove("actif");
+  $("ecran-auth").classList.add("actif");
+}
+
+function quitterSalon() {
+  if (canal) { db.removeChannel(canal); canal = null; }
+  salonActuel = null;
+}
+
+function montrerListe() {
+  quitterSalon();
+  $("vue-salon").style.display = "none";
+  $("contenu").classList.remove("plein");
+  $("vue-liste").style.display = "block";
+}
+
+function defiler() {
+  const z = $("messages");
+  z.scrollTop = z.scrollHeight;
+}
+
+function texteVide(salon) {
+  return "Personne n'a encore écrit ici. Lance la discussion, par exemple : « " + salon.amorce + " »";
+}
+
+// Une couleur stable pour chaque pseudo (même pseudo = même couleur)
+function couleurPseudo(nom) {
+  let h = 0;
+  for (const c of nom) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return "hsl(" + h + " 50% 36%)";
+}
+
+function ajouterMessage(m) {
+  if (dejaVus.has(m.id)) return;
+  dejaVus.add(m.id);
+  const vide = $("aucun-message");
+  if (vide) vide.remove();
+  const estMoi = !!(moi && m.auteur_id === moi.id);
+  const pseudo = (m.pseudo || "?").trim() || "?";
+
+  const div = document.createElement("div");
+  div.className = "msg" + (estMoi ? " moi" : "");
+
+  if (!estMoi) {
+    const av = document.createElement("div");
+    av.className = "avatar";
+    av.textContent = pseudo.charAt(0).toUpperCase();
+    av.style.background = couleurPseudo(pseudo);
+    av.setAttribute("aria-hidden", "true");
+    div.appendChild(av);
+  }
+
+  const bulle = document.createElement("div");
+  bulle.className = "bulle";
+  const qui = document.createElement("div");
+  qui.className = "qui";
+  if (!estMoi) {
+    const nom = document.createElement("span");
+    nom.className = "nom";
+    nom.textContent = pseudo;
+    qui.appendChild(nom);
+  }
+  const heure = document.createElement("span");
+  heure.className = "heure";
+  heure.textContent = new Date(m.cree_le).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  qui.appendChild(heure);
+  const texte = document.createElement("div");
+  texte.className = "texte";
+  texte.textContent = m.contenu;
+  bulle.appendChild(qui);
+  bulle.appendChild(texte);
+  div.appendChild(bulle);
+
+  $("messages").appendChild(div);
+  defiler();
+}
+
+async function ouvrirSalon(salon) {
+  quitterSalon();
+  salonActuel = salon;
+  dejaVus.clear();
+  $("salon-titre").textContent = salon.nom;
+  $("salon-desc").textContent = salon.desc;
+  $("salon-pastille").textContent = salon.icone;
+  $("vue-salon").style.setProperty("--c", salon.couleur);
+  $("erreur-chat").textContent = "";
+  $("messages").innerHTML = '<div class="vide" id="aucun-message">Chargement des messages…</div>';
+  $("vue-liste").style.display = "none";
+  $("contenu").classList.add("plein");
+  $("vue-salon").style.display = "flex";
+  window.scrollTo(0, 0);
+
+  const { data, error } = await db.from("messages_salon").select("*")
+    .eq("salon", salon.id).order("cree_le", { ascending: true }).limit(100);
+  if (salonActuel !== salon) return;
+  if (error) {
+    $("messages").innerHTML = "";
+    $("erreur-chat").textContent = "Impossible de charger les messages : " + error.message;
+  } else if (data.length === 0) {
+    $("aucun-message").textContent = texteVide(salon);
+  } else {
+    data.forEach(ajouterMessage);
+  }
+
+  canal = db.channel("salon-" + salon.id)
+    .on("postgres_changes",
+      { event: "INSERT", schema: "public", table: "messages_salon", filter: "salon=eq." + salon.id },
+      (p) => ajouterMessage(p.new))
+    .subscribe();
+}
+
+async function envoyer() {
+  const champ = $("saisie");
+  const texte = champ.value.trim();
+  if (!texte || !salonActuel) return;
+  champ.value = "";
+  const { data, error } = await db.from("messages_salon")
+    .insert({ salon: salonActuel.id, contenu: texte }).select().single();
+  if (error) {
+    champ.value = texte;
+    $("erreur-chat").textContent = "Message non envoyé : " + error.message;
+    return;
+  }
+  $("erreur-chat").textContent = "";
+  ajouterMessage(data);
+}
+
+// Liste des salons : on ajoute une étape dans l'historique en entrant dans un salon
+const zone = $("liste-salons");
+SALONS.forEach(s => {
+  const b = document.createElement("button");
+  b.className = "salon";
+  b.type = "button";
+  b.style.setProperty("--c", s.couleur);
+  b.innerHTML = '<span class="pastille" aria-hidden="true"></span><span class="texte"><h3></h3><span class="desc"></span></span><span class="fleche" aria-hidden="true">›</span>';
+  b.querySelector(".pastille").textContent = s.icone;
+  b.querySelector("h3").textContent = s.nom;
+  b.querySelector(".desc").textContent = s.desc;
+  b.addEventListener("click", () => {
+    history.pushState({ salon: s.id }, "", "#" + s.id);
+    ouvrirSalon(s);
+  });
+  zone.appendChild(b);
+});
+
+// Bouton retour du téléphone ou du navigateur : revenir à la liste, sans quitter le site
+window.addEventListener("popstate", (e) => {
+  if (!moi) return;
+  const s = e.state && e.state.salon ? SALONS.find(x => x.id === e.state.salon) : null;
+  if (s) ouvrirSalon(s); else montrerListe();
+});
+
+$("retour").addEventListener("click", () => {
+  if (history.state && history.state.salon) history.back(); else montrerListe();
+});
+
+$("onglet-inscription").addEventListener("click", () => choisirMode(true));
+$("onglet-connexion").addEventListener("click", () => choisirMode(false));
+$("envoyer").addEventListener("click", envoyer);
+$("saisie").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); envoyer(); } });
+
+$("valider").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  const mdp = $("mdp").value;
+  const pseudo = $("pseudo").value.trim();
+  if (!email || !mdp) return afficherMessage("Remplis ton e-mail et ton mot de passe.", "erreur");
+  if (mdp.length < 6) return afficherMessage("Le mot de passe doit avoir au moins 6 caractères.", "erreur");
+  if (modeInscription && !pseudo) return afficherMessage("Choisis un pseudo.", "erreur");
+  $("valider").disabled = true;
+  afficherMessage("Un instant…");
+  try {
+    if (modeInscription) {
+      const { data, error } = await db.auth.signUp({ email, password: mdp, options: { data: { pseudo } } });
+      if (error) throw error;
+      if (data.session) {
+        montrerAccueil(data.user);
+      } else {
+        afficherMessage("Compte créé. Il reste à confirmer l'e-mail avant de te connecter.", "ok");
+      }
+    } else {
+      const { data, error } = await db.auth.signInWithPassword({ email, password: mdp });
+      if (error) throw error;
+      montrerAccueil(data.user);
+    }
+  } catch (e) {
+    let texte = e.message || "Une erreur est survenue.";
+    if (/already registered/i.test(texte)) texte = "Cet e-mail a déjà un compte. Va sur « Se connecter ».";
+    else if (/invalid login/i.test(texte)) texte = "E-mail ou mot de passe incorrect.";
+    else if (/not confirmed/i.test(texte)) texte = "Ce compte n'a pas été confirmé par e-mail. Crée un nouveau compte avec une autre adresse.";
+    afficherMessage(texte, "erreur");
+  } finally {
+    $("valider").disabled = false;
+  }
+});
+
+$("deconnexion").addEventListener("click", async () => {
+  quitterSalon();
+  await db.auth.signOut();
+  moi = null;
+  montrerAuth();
+  choisirMode(false);
+});
+
+db.auth.getSession().then(({ data }) => {
+  if (data.session) montrerAccueil(data.session.user);
+});
+</script>
+</body>
+</html>
