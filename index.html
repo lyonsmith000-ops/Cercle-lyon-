@@ -314,11 +314,56 @@ body.theme-salon { background: var(--fond); }
 
 /* Contenu du jour : citation éditoriale */
 .du-jour .etiquette { font-family: inherit; font-style: normal; text-transform: uppercase; letter-spacing: .16em; font-size: .7rem; font-weight: 600; color: var(--lien); margin: 0 0 4px; }
-.du-jour { margin-bottom: 6px; }
+.du-jour { margin-bottom: 18px; }
 .du-jour .art { position: relative; padding: 38px 4px 10px; border-top: 1px solid var(--filet); border-bottom: 0; background: transparent; }
 .du-jour .art::before { display: block; content: "\201C"; position: absolute; left: 0; top: 4px; bottom: auto; width: auto; border-radius: 0; background: none; font-family: var(--serif); font-size: 4rem; line-height: 1; color: var(--accent); }
 .du-jour .art h3 { font-size: 1.3rem; }
 .du-jour .art p { font-size: 1.12rem; }
+/* ===== Couleurs par salon, cartes visuelles ===== */
+[data-salon="amour"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M38 52s-16-9-16-22a9 9 0 0 1 16-6 9 9 0 0 1 16 6c0 13-16 22-16 22z'/%3E%3Cpath d='M112 128s-11-7-11-16a7 7 0 0 1 11-5 7 7 0 0 1 11 5c0 9-11 16-11 16z'/%3E%3Ccircle cx='108' cy='38' r='10'/%3E%3Ccircle cx='120' cy='38' r='10'/%3E%3Cpath d='M20 112l8 8M36 112l-8 8'/%3E%3C/g%3E%3C/svg%3E"); }
+[data-salon="entrepreneuriat"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 140l36-40 24 22 48-62 36 24'/%3E%3Cpath d='M104 60h24v24'/%3E%3Cpath d='M20 20h26M20 32h14'/%3E%3Crect x='118' y='120' width='10' height='24'/%3E%3Crect x='134' y='104' width='10' height='40'/%3E%3C/g%3E%3C/svg%3E"); }
+[data-salon="quotidien"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='110' cy='40' r='14'/%3E%3Cpath d='M110 12v8M110 60v8M82 40h8M130 40h8M90 20l6 6M124 54l6 6M130 20l-6 6M96 54l-6 6'/%3E%3Cpath d='M14 120q14-16 28 0t28 0 28 0'/%3E%3Cpath d='M14 134q14-16 28 0t28 0 28 0'/%3E%3C/g%3E%3C/svg%3E"); }
+[data-salon="histoires"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 140V70a30 30 0 0 1 60 0v70z'/%3E%3Cpath d='M100 140V90a20 20 0 0 1 40 0v50z'/%3E%3Cpath d='M34 140V72a16 16 0 0 1 32 0v68'/%3E%3Cpath d='M10 140h140'/%3E%3Cpath d='M96 30h40M96 42h28'/%3E%3C/g%3E%3C/svg%3E"); }
+.photo-amour [data-salon="amour"], .photo-entrepreneuriat [data-salon="entrepreneuriat"], .photo-quotidien [data-salon="quotidien"], .photo-histoires [data-salon="histoires"] { --couche-photo: linear-gradient(0deg, rgba(0, 0, 0, .66), rgba(0, 0, 0, .26)), var(--photo) var(--pos, center) / cover; }
+.photo-amour [data-salon="amour"] { --photo: url("images/amour.jpg"); }
+.photo-entrepreneuriat [data-salon="entrepreneuriat"] { --photo: url("images/entrepreneuriat.jpg"); }
+.photo-quotidien [data-salon="quotidien"] { --photo: url("images/quotidien.jpg"); }
+.photo-histoires [data-salon="histoires"] { --photo: url("images/histoires.jpg"); }
+#liste-salons .salon, #liste-messages .salon, .art[data-salon], .lecture-tete[data-salon] {
+  color: #fff; border: 0;
+  background: var(--couche-photo, linear-gradient(transparent, transparent)), var(--motif) 0 0 / 150px 150px repeat, linear-gradient(150deg, color-mix(in srgb, var(--c) 92%, #000), color-mix(in srgb, var(--c) 48%, #000));
+}
+body.theme-salon { background: color-mix(in srgb, var(--c) 8%, var(--fond)); }
+#liste-salons, #liste-messages { gap: 12px; border-top: 0; }
+#liste-salons .salon, #liste-messages .salon { min-height: 96px; padding: 18px 16px; border-radius: 20px; box-shadow: 0 12px 24px -16px color-mix(in srgb, var(--c) 80%, #000); }
+#liste-salons .salon h3, #liste-messages .salon h3 { color: #fff; font-size: 1.22rem; }
+#liste-salons .salon .desc, #liste-messages .salon .desc { color: rgba(255, 255, 255, .85); }
+#liste-salons .salon .fleche, #liste-messages .salon .fleche { color: #fff; }
+#liste-salons .salon .pastille, #liste-messages .salon .pastille { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .55); color: #fff; width: 52px; height: 52px; }
+.lecture-tete[data-salon] { padding: 18px 16px; border-radius: 20px; margin-bottom: 18px; }
+.lecture-tete[data-salon] h2 { color: #fff; }
+.lecture-tete[data-salon] p { color: rgba(255, 255, 255, .88); }
+.lecture-tete[data-salon] .retour { color: #fff; border-color: rgba(255, 255, 255, .55); }
+.lecture-tete[data-salon] .pastille { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .55); color: #fff; }
+.articles { gap: 16px; }
+.art[data-salon] { padding: 26px 22px 12px; border-radius: 20px; box-shadow: 0 12px 24px -16px color-mix(in srgb, var(--c) 80%, #000); }
+.art[data-salon]:nth-child(3n+2) { --pos: 25% 30%; }
+.art[data-salon]:nth-child(3n) { --pos: 75% 65%; }
+.art[data-salon] h3 { color: #fff; font-size: 1.25rem; }
+.art[data-salon] p { color: rgba(255, 255, 255, .93); }
+.art[data-salon] .rub { color: rgba(255, 255, 255, .78); }
+.art[data-salon] .sauve, .art[data-salon] .partage { color: rgba(255, 255, 255, .92); }
+.art[data-salon] .sauve.oui { color: #fff; }
+.art[data-salon] .sauve:active, .art[data-salon] .partage:active { background: rgba(255, 255, 255, .2); }
+.art[data-salon] .hist-qui span, .art[data-salon] .hist-lien { color: rgba(255, 255, 255, .78); }
+.art[data-salon] .hist-lien.danger { color: #ffd6d1; }
+.art[data-salon] .hist-plus { color: #fff; }
+.art[data-salon] .reac { color: rgba(255, 255, 255, .85); }
+.art[data-salon] .reac.oui { color: #fff; }
+.du-jour .art[data-salon] { padding: 28px 22px 12px; border-top: 0; border-bottom: 0; }
+.du-jour .art[data-salon]::before { content: none; display: none; }
+.du-jour .etiquette { color: var(--doux); }
+.nav button { font-size: .72rem; }
 </style>
 </head>
 <body>
@@ -549,7 +594,12 @@ function poserIcone(el, s) {
   const k = ICO[s.id] || (s.prive ? (s.est_groupe ? ICO.groupe : ICO.user) : null);
   if (k) el.innerHTML = k; else el.textContent = s.icone;
 }
-document.querySelectorAll("#nav button").forEach(b => { const i = b.querySelector(".i"); if (i && NAVICO[b.dataset.onglet]) i.innerHTML = NAVICO[b.dataset.onglet]; });
+/* Photos facultatives par salon : si le fichier images/<salon>.jpg existe sur le site, il sert de fond */
+SALONS.forEach(s => {
+  const im = new Image();
+  im.onload = () => document.documentElement.classList.add("photo-" + s.id);
+  im.src = "images/" + s.id + ".jpg";
+});
 
 
 const CONTENUS = {
@@ -1089,6 +1139,7 @@ function carte(salon, i, avecRubrique) {
   const c = CONTENUS[salon.id][i], id = salon.id + "-" + i;
   const a = document.createElement("article");
   a.className = "art";
+  a.dataset.salon = salon.id;
   a.style.setProperty("--c", salon.couleur);
   const h = document.createElement("h3"); h.textContent = c.t;
   const p = document.createElement("p"); p.textContent = c.x;
@@ -1314,6 +1365,7 @@ async function chargerHistoires() {
 function carteHistoire(h, reacs) {
   const salon = SALONS.find(s => s.id === h.theme) || SALONS[0];
   const a = document.createElement("article"); a.className = "art";
+  a.dataset.salon = salon.id;
   a.style.setProperty("--c", salon.couleur);
 
   const tete = document.createElement("div"); tete.className = "hist-tete";
@@ -1459,6 +1511,7 @@ function ouvrirLecture(s) {
   $("contenu").classList.remove("plein");
   $("nav").style.display = "flex";
   poserIcone($("lecture-pastille"), s);
+  document.querySelector("#vue-lecture .lecture-tete").dataset.salon = s.id;
   $("lecture-titre").textContent = s.nom;
   $("lecture-desc").textContent = s.desc;
   $("vue-lecture").style.setProperty("--c", s.couleur);
@@ -1847,6 +1900,7 @@ function remplirListe(zone, action, desc) {
     b.className = "salon";
     b.type = "button";
     b.style.setProperty("--c", s.couleur);
+    b.dataset.salon = s.id;
     b.innerHTML = '<span class="pastille" aria-hidden="true"></span><span class="texte"><h3></h3><span class="desc"></span></span><span class="fleche" aria-hidden="true">›</span>';
     poserIcone(b.querySelector(".pastille"), s);
     b.querySelector("h3").textContent = s.nom;
