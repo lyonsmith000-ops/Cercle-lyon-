@@ -324,11 +324,11 @@ body.theme-salon { background: var(--fond); }
 [data-salon="entrepreneuriat"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 140l36-40 24 22 48-62 36 24'/%3E%3Cpath d='M104 60h24v24'/%3E%3Cpath d='M20 20h26M20 32h14'/%3E%3Crect x='118' y='120' width='10' height='24'/%3E%3Crect x='134' y='104' width='10' height='40'/%3E%3C/g%3E%3C/svg%3E"); }
 [data-salon="quotidien"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='110' cy='40' r='14'/%3E%3Cpath d='M110 12v8M110 60v8M82 40h8M130 40h8M90 20l6 6M124 54l6 6M130 20l-6 6M96 54l-6 6'/%3E%3Cpath d='M14 120q14-16 28 0t28 0 28 0'/%3E%3Cpath d='M14 134q14-16 28 0t28 0 28 0'/%3E%3C/g%3E%3C/svg%3E"); }
 [data-salon="histoires"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 140V70a30 30 0 0 1 60 0v70z'/%3E%3Cpath d='M100 140V90a20 20 0 0 1 40 0v50z'/%3E%3Cpath d='M34 140V72a16 16 0 0 1 32 0v68'/%3E%3Cpath d='M10 140h140'/%3E%3Cpath d='M96 30h40M96 42h28'/%3E%3C/g%3E%3C/svg%3E"); }
-.photo-amour [data-salon="amour"], .photo-entrepreneuriat [data-salon="entrepreneuriat"], .photo-quotidien [data-salon="quotidien"], .photo-histoires [data-salon="histoires"] { --couche-photo: linear-gradient(0deg, rgba(0, 0, 0, .66), rgba(0, 0, 0, .26)), var(--photo) var(--pos, center) / cover; }
-.photo-amour [data-salon="amour"] { --photo: url("images/amour.jpg"); }
-.photo-entrepreneuriat [data-salon="entrepreneuriat"] { --photo: url("images/entrepreneuriat.jpg"); }
-.photo-quotidien [data-salon="quotidien"] { --photo: url("images/quotidien.jpg"); }
-.photo-histoires [data-salon="histoires"] { --photo: url("images/histoires.jpg"); }
+.photo-amour [data-salon="amour"], .photo-entrepreneuriat [data-salon="entrepreneuriat"], .photo-quotidien [data-salon="quotidien"], .photo-histoires [data-salon="histoires"] { --couche-photo: linear-gradient(color-mix(in srgb, var(--c) 26%, transparent), color-mix(in srgb, var(--c) 26%, transparent)), linear-gradient(0deg, rgba(0, 0, 0, .68), rgba(0, 0, 0, .28)), var(--photo) var(--pos, center) / cover; }
+.photo-amour [data-salon="amour"] { --photo: var(--photo-amour); }
+.photo-entrepreneuriat [data-salon="entrepreneuriat"] { --photo: var(--photo-entrepreneuriat); }
+.photo-quotidien [data-salon="quotidien"] { --photo: var(--photo-quotidien); }
+.photo-histoires [data-salon="histoires"] { --photo: var(--photo-histoires); }
 #liste-salons .salon, #liste-messages .salon, .art[data-salon], .lecture-tete[data-salon] {
   color: #fff; border: 0;
   background: var(--couche-photo, linear-gradient(transparent, transparent)), var(--motif) 0 0 / 150px 150px repeat, linear-gradient(150deg, color-mix(in srgb, var(--c) 92%, #000), color-mix(in srgb, var(--c) 48%, #000));
@@ -652,11 +652,28 @@ function afficherReprise() {
   zone.style.display = "block";
 }
 
-/* Photos facultatives par salon : si le fichier images/<salon>.jpg existe sur le site, il sert de fond */
-SALONS.forEach(s => {
-  const im = new Image();
-  im.onload = () => document.documentElement.classList.add("photo-" + s.id);
-  im.src = "images/" + s.id + ".jpg";
+/* Photos des salons : noms de fichiers du dépôt (on essaie aussi images/<salon>.jpg) */
+const PHOTOS = {
+  amour: ["amour et amitié.jpg"],
+  entrepreneuriat: ["entrepreuniat.jpg", "entrepreneuriat.jpg"],
+  quotidien: ["quotidien.jpg"],
+  histoires: ["Histoire marquante.jpg"]
+};
+SALONS.forEach(sal => {
+  const noms = [];
+  (PHOTOS[sal.id] || []).concat([sal.id + ".jpg", "images/" + sal.id + ".jpg"]).forEach(n => {
+    [n.normalize("NFC"), n.normalize("NFD")].forEach(v => { if (!noms.includes(v)) noms.push(v); });
+  });
+  (function essai(i) {
+    if (i >= noms.length) return;
+    const im = new Image();
+    im.onload = () => {
+      document.documentElement.style.setProperty("--photo-" + sal.id, 'url("' + encodeURI(noms[i]) + '")');
+      document.documentElement.classList.add("photo-" + sal.id);
+    };
+    im.onerror = () => essai(i + 1);
+    im.src = encodeURI(noms[i]);
+  })(0);
 });
 
 
