@@ -260,6 +260,12 @@ body.theme-salon { background: color-mix(in srgb, var(--c) 8%, var(--fond)); }
 .hist-form .case input { width: 22px; height: 22px; margin-top: 2px; flex: none; }
 .hist-form .note { margin-top: 10px; }
 .hist-form .bouton.sec { margin-top: 10px; }
+.profil-admin { max-width: 420px; margin: 24px auto 0; padding: 16px; border: 1px solid var(--or); border-radius: 16px; background: var(--carte); }
+.profil-admin h3 { font-size: 1.05rem; }
+.profil-admin .message { margin-top: 8px; color: var(--doux); font-size: .9rem; min-height: 0; }
+.admin-ligne { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--bord); font-size: .95rem; }
+.admin-ligne small { color: var(--doux); }
+.admin-ligne .neuf { margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #e0392d; color: #fff; font-size: .7rem; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -384,6 +390,11 @@ body.theme-salon { background: color-mix(in srgb, var(--c) 8%, var(--fond)); }
         <input id="profil-fichier" type="file" accept="image/*" hidden>
       </div>
       <div id="profil-msg" class="message" role="status"></div>
+      <div class="profil-admin" id="profil-admin" style="display:none">
+        <h3>👑 Nouveaux membres</h3>
+        <p id="admin-resume" class="message"></p>
+        <div id="admin-liste"></div>
+      </div>
       <div class="profil-notifs">
         <h3>Notifications</h3>
         <p id="notif-etat" class="message"></p>
@@ -924,6 +935,7 @@ function montrerAccueil(utilisateur) {
   chargerSaves();
   rendreDuJour();
   chargerNonLus();
+  chargerAdminMembres(false);
   ecouterNouveaux();
   synchroNotifs();
   montrerListe();
@@ -953,7 +965,7 @@ function montrerOnglet(nom) {
   if (nom === "enregistres") rendreEnregistres();
   if (nom === "messages") chargerConversations();
   if (nom === "histoires") { fermerFormHistoire(); chargerHistoires(); }
-  if (nom === "profil") afficherProfil();
+  if (nom === "profil") { afficherProfil(); chargerAdminMembres(true); }
   window.scrollTo(0, 0);
 }
 function montrerListe() { montrerOnglet(onglet); }
@@ -1313,6 +1325,48 @@ $("hist-publier").addEventListener("click", async () => {
   fermerFormHistoire(); chargerHistoires();
 });
 construireThemesHistoires();
+
+/* Carte administrateur : nouveaux membres (Supabase ne répond qu'au compte administrateur) */
+const CLE_VU_ADMIN = "cls_admin_vu";
+function lireVuAdmin() { try { return Number(localStorage.getItem(CLE_VU_ADMIN)) || 0; } catch (e) { return 0; } }
+function ecrireVuAdmin(n) { try { localStorage.setItem(CLE_VU_ADMIN, String(n)); } catch (e) {} }
+
+function pastilleProfil(n) {
+  const bouton = document.querySelector('#nav button[data-onglet="profil"]');
+  if (!bouton) return;
+  let p = bouton.querySelector(".pastille-nl");
+  if (n > 0) {
+    if (!p) { p = document.createElement("span"); p.className = "pastille-nl"; bouton.appendChild(p); }
+    p.textContent = n > 99 ? "99+" : String(n);
+  } else if (p) p.remove();
+}
+
+async function chargerAdminMembres(ouvert) {
+  const carte = $("profil-admin");
+  if (!moi) return;
+  const { data, error } = await db.rpc("nouveaux_membres");
+  if (error || !data || !data.length) { carte.style.display = "none"; pastilleProfil(0); return; }
+  let vu = lireVuAdmin();
+  if (!vu) { vu = Date.now(); ecrireVuAdmin(vu); } // première fois : on part de maintenant
+  const nouveaux = data.filter(m => m.membre_id !== moi.id && Date.parse(m.inscrit_le) > vu);
+  if (!ouvert) { pastilleProfil(nouveaux.length); return; }
+  carte.style.display = "block";
+  const total = Number(data[0].total) || data.length;
+  $("admin-resume").textContent = total + " membre" + (total > 1 ? "s" : "") + " au total · " +
+    (nouveaux.length ? nouveaux.length + " nouveau" + (nouveaux.length > 1 ? "x" : "") + " depuis ta dernière visite" : "aucun nouveau depuis ta dernière visite");
+  const z = $("admin-liste"); z.innerHTML = "";
+  data.slice(0, 15).forEach(m => {
+    const l = document.createElement("div"); l.className = "admin-ligne";
+    const g = document.createElement("span"); g.textContent = m.membre_pseudo || "Membre";
+    if (m.membre_id !== moi.id && Date.parse(m.inscrit_le) > vu) { const t = document.createElement("span"); t.className = "neuf"; t.textContent = "Nouveau"; g.appendChild(t); }
+    const d = document.createElement("small");
+    d.textContent = new Date(m.inscrit_le).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    l.appendChild(g); l.appendChild(d); z.appendChild(l);
+  });
+  ecrireVuAdmin(Date.now());
+  pastilleProfil(0);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && moi) chargerAdminMembres(onglet === "profil"); });
 
 
 function ouvrirLecture(s) {
