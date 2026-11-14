@@ -266,6 +266,59 @@ body.theme-salon { background: color-mix(in srgb, var(--c) 8%, var(--fond)); }
 .admin-ligne { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--bord); font-size: .95rem; }
 .admin-ligne small { color: var(--doux); }
 .admin-ligne .neuf { margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #e0392d; color: #fff; font-size: .7rem; font-weight: 700; }
+/* ===== Design épuré : noir, or, ivoire ===== */
+:root { --filet: color-mix(in srgb, var(--accent) 38%, var(--bord)); }
+body.theme-salon { background: var(--fond); }
+.bienvenue h2 { font-size: 1.55rem; font-weight: 600; letter-spacing: 0; }
+.bienvenue p { font-size: .98rem; margin: 6px 0 20px; }
+.nav .i svg { width: 24px; height: 24px; display: block; }
+.nav button { font-size: .7rem; letter-spacing: .02em; gap: 3px; }
+
+/* Salons : liste sobre, filets dorés */
+.salons { gap: 0; border-top: 1px solid var(--filet); }
+.salon { padding: 18px 4px; border: 0; border-bottom: 1px solid var(--filet); border-radius: 0; background: transparent; }
+.salon:hover { border-color: var(--filet); }
+.salon:active { transform: none; opacity: .7; }
+.salon.coche { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.salon h3 { font-size: 1.12rem; font-weight: 600; }
+.salon .desc { font-size: .9rem; }
+.salon .fleche { color: var(--accent); font-size: 1.6rem; font-weight: 300; }
+.pastille, .salon .pastille { width: 46px; height: 46px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-size: 1.1rem; }
+.pastille svg { width: 22px; height: 22px; display: block; }
+.offre .ico svg { width: 22px; height: 22px; display: block; color: var(--accent); }
+
+/* En-tête d'un salon */
+.lecture-tete { padding: 14px 4px; margin-bottom: 14px; border: 0; border-bottom: 1px solid var(--filet); border-radius: 0; color: var(--encre); background: transparent; }
+.lecture-tete h2 { color: var(--encre); font-size: 1.3rem; }
+.lecture-tete p { color: var(--doux); }
+.lecture-tete .retour { color: var(--encre); border-color: var(--bord); }
+.lecture-tete .pastille, .salon-tete .pastille { width: 44px; height: 44px; background: transparent; border-color: var(--accent); color: var(--accent); }
+
+/* Contenus : lecture façon livre */
+.articles { gap: 0; }
+.art { padding: 22px 2px 12px; border: 0; border-top: 1px solid var(--filet); border-radius: 0; background: transparent; box-shadow: none; }
+.art::before { display: none; }
+.art h3 { font-size: 1.18rem; font-weight: 600; letter-spacing: .01em; color: var(--lien); }
+.art p { font-size: 1.05rem; line-height: 1.75; }
+.art .rub { text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; font-weight: 600; color: var(--doux); }
+.art .actions { gap: 2px; }
+.art .sauve, .art .partage { width: 40px; height: 40px; padding: 0; display: grid; place-items: center; border: 0; background: transparent; color: var(--lien); border-radius: 50%; }
+.art .sauve.oui { background: transparent; color: var(--accent); }
+.art .sauve svg, .art .partage svg { width: 22px; height: 22px; display: block; }
+.art .sauve.oui svg { fill: currentColor; }
+.art .sauve:active, .art .partage:active { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.art .reac { display: inline-flex; align-items: center; gap: 7px; border: 0; background: transparent; color: var(--doux); padding: 8px 10px 8px 0; border-radius: 0; font-size: .95rem; }
+.art .reac.oui { background: transparent; color: var(--accent); font-weight: 600; }
+.art .reac svg { width: 21px; height: 21px; display: block; }
+.art .reac.oui svg { fill: currentColor; }
+
+/* Contenu du jour : citation éditoriale */
+.du-jour .etiquette { font-family: inherit; font-style: normal; text-transform: uppercase; letter-spacing: .16em; font-size: .7rem; font-weight: 600; color: var(--lien); margin: 0 0 4px; }
+.du-jour { margin-bottom: 6px; }
+.du-jour .art { position: relative; padding: 38px 4px 10px; border-top: 1px solid var(--filet); border-bottom: 0; background: transparent; }
+.du-jour .art::before { display: block; content: "\201C"; position: absolute; left: 0; top: 4px; bottom: auto; width: auto; border-radius: 0; background: none; font-family: var(--serif); font-size: 4rem; line-height: 1; color: var(--accent); }
+.du-jour .art h3 { font-size: 1.3rem; }
+.du-jour .art p { font-size: 1.12rem; }
 </style>
 </head>
 <body>
@@ -355,7 +408,7 @@ body.theme-salon { background: color-mix(in srgb, var(--c) 8%, var(--fond)); }
     <div id="vue-histoires">
       <div id="hist-principal">
         <div class="bienvenue"><h2>Histoires</h2><p>Les histoires vraies des membres : lis, réagis, et raconte la tienne.</p></div>
-        <button id="hist-ecrire" class="bouton" type="button" style="margin-top:0">✍️ Raconter mon histoire</button>
+        <button id="hist-ecrire" class="bouton" type="button" style="margin-top:0">Raconter mon histoire</button>
         <div class="hist-themes" id="hist-themes"></div>
         <div id="hist-msg" class="message" role="status"></div>
         <p class="vide-liste" id="hist-vide" style="display:none">Aucune histoire pour l'instant. Sois la première personne à raconter la sienne !</p>
@@ -471,6 +524,33 @@ const SALONS = [
   { id: "histoires", nom: "Histoires marquantes", desc: "Grands hommes et récits qui marquent.", icone: "📖", couleur: "#4338ca",
     amorce: "Quelle histoire vraie t'a le plus marqué ?" }
 ];
+
+/* Icônes fines (traits) : remplacent les emojis pour un rendu sobre */
+const svg = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+const ICO = {
+  amour: svg('<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/>'),
+  entrepreneuriat: svg('<path d="M4 17.5 9.5 12l3.5 3.5L20 8.5"/><path d="M15 8.5h5v5"/>'),
+  quotidien: svg('<circle cx="12" cy="12" r="3.8"/><path d="M12 3.5v2.2M12 18.3v2.5M3.5 12h2.2M18.3 12h2.5M6 6l1.5 1.5M16.5 16.5 18 18M18 6l-1.5 1.5M7.5 16.5 6 18"/>'),
+  histoires: svg('<path d="M12 6.5C10.3 5.3 8 4.8 4.5 5v12.5c3.5-.2 5.8.3 7.5 1.5 1.7-1.2 4-1.7 7.5-1.5V5c-3.5-.2-5.8.3-7.5 1.5z"/><path d="M12 6.5V19"/>'),
+  messages: svg('<path d="M4.5 5.5h15a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1H10l-4.5 3.5V17h-1a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1z"/>'),
+  user: svg('<circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c.6-3.7 3.6-5.8 7.2-5.8s6.6 2.1 7.2 5.8"/>'),
+  groupe: svg('<circle cx="9" cy="9" r="3.1"/><path d="M3.5 19.5c.5-3.2 2.8-5 5.5-5s5 1.8 5.5 5"/><path d="M15.5 6.3a3 3 0 0 1 0 5.6"/><path d="M17.5 14.7c1.8.6 3 2.2 3.3 4.8"/>'),
+  signet: svg('<path d="M6.5 4h11v16.5L12 16.5 6.5 20.5z"/>'),
+  partage: svg('<path d="M20.5 4 3.5 11l6.2 2.6L12 20z"/><path d="M9.7 13.6 20.5 4"/>'),
+  idee: svg('<path d="M9.5 17.5h5M10 20.5h4"/><path d="M12 3.5a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2h5c0-.8.4-1.5 1-2A6 6 0 0 0 12 3.5z"/>')
+};
+ICO.coeur = ICO.amour;
+const NAVICO = {
+  accueil: svg('<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/>'),
+  histoires: svg('<path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/>'),
+  messages: ICO.messages, enregistres: ICO.signet, profil: ICO.user
+};
+function poserIcone(el, s) {
+  const k = ICO[s.id] || (s.prive ? (s.est_groupe ? ICO.groupe : ICO.user) : null);
+  if (k) el.innerHTML = k; else el.textContent = s.icone;
+}
+document.querySelectorAll("#nav button").forEach(b => { const i = b.querySelector(".i"); if (i && NAVICO[b.dataset.onglet]) i.innerHTML = NAVICO[b.dataset.onglet]; });
+
 
 const CONTENUS = {
   amour: [
@@ -926,7 +1006,7 @@ function montrerAccueil(utilisateur) {
   if (enRecup) return;
   moi = utilisateur;
   const pseudo = (utilisateur.user_metadata && utilisateur.user_metadata.pseudo) || utilisateur.email.split("@")[0];
-  $("titre-bienvenue").textContent = "Bienvenue, " + pseudo + " !";
+  $("titre-bienvenue").textContent = "Bonjour, " + pseudo;
   $("ecran-auth").classList.remove("actif");
   $("ecran-accueil").classList.add("actif");
   history.replaceState({ liste: true }, "", location.pathname + location.search);
@@ -1014,11 +1094,13 @@ function carte(salon, i, avecRubrique) {
   const p = document.createElement("p"); p.textContent = c.x;
   const pied = document.createElement("div"); pied.className = "pied";
   const r = document.createElement("span"); r.className = "rub";
-  r.textContent = avecRubrique ? salon.icone + " " + salon.nom : "";
+  r.textContent = avecRubrique ? salon.nom : "";
   const b = document.createElement("button"); b.type = "button"; b.className = "sauve";
   const maj = () => {
     const on = lireSaves().includes(id);
-    b.textContent = on ? "Enregistré" : "Enregistrer";
+    b.innerHTML = ICO.signet;
+    b.title = on ? "Retirer des enregistrés" : "Enregistrer";
+    b.setAttribute("aria-label", b.title);
     b.classList.toggle("oui", on);
     b.setAttribute("aria-pressed", on ? "true" : "false");
   };
@@ -1032,7 +1114,7 @@ function carte(salon, i, avecRubrique) {
   });
   maj();
   const bp = document.createElement("button"); bp.type = "button"; bp.className = "partage";
-  bp.textContent = "Partager";
+  bp.innerHTML = ICO.partage; bp.title = "Partager"; bp.setAttribute("aria-label", "Partager");
   bp.addEventListener("click", () => partagerCarte(salon, i, bp));
   const actions = document.createElement("div"); actions.className = "actions";
   actions.appendChild(bp); actions.appendChild(b);
@@ -1111,7 +1193,9 @@ async function dessinerCarte(salon, c) {
 
   // salon
   ctx.fillStyle = "#f3e7c4"; ctx.font = "600 38px " + SANS;
-  ctx.fillText(salon.icone + "  " + salon.nom, W / 2, y);
+  if ("letterSpacing" in ctx) ctx.letterSpacing = "5px";
+  ctx.fillText(salon.nom.toUpperCase(), W / 2, y);
+  if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
   y += 40;
   ctx.strokeStyle = OR; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(W / 2 - 70, y); ctx.lineTo(W / 2 + 70, y); ctx.stroke();
@@ -1145,8 +1229,8 @@ async function dessinerCarte(salon, c) {
 
 async function partagerCarte(salon, i, bouton) {
   const c = CONTENUS[salon.id][i];
-  const avant = bouton.textContent;
-  bouton.disabled = true; bouton.textContent = "Création…";
+  const avant = bouton.innerHTML;
+  bouton.disabled = true; bouton.textContent = "…";
   try {
     const blob = await dessinerCarte(salon, c);
     const fichier = new File([blob], "lyon-cercle-story.png", { type: "image/png" });
@@ -1162,12 +1246,12 @@ async function partagerCarte(salon, i, bouton) {
     }
   } catch (e) {
     if (!e || e.name !== "AbortError") {
-      bouton.textContent = "Erreur, réessaie";
-      setTimeout(() => { bouton.textContent = avant; bouton.disabled = false; }, 1800);
+      bouton.textContent = "Erreur";
+      setTimeout(() => { bouton.innerHTML = avant; bouton.disabled = false; }, 1800);
       return;
     }
   }
-  bouton.textContent = avant; bouton.disabled = false;
+  bouton.innerHTML = avant; bouton.disabled = false;
 }
 
 /* Mur des histoires */
@@ -1179,9 +1263,9 @@ function dateCourte(iso) {
 
 function construireThemesHistoires() {
   const z = $("hist-themes"); z.innerHTML = "";
-  [{ id: "tous", icone: "✨", nom: "Toutes" }].concat(SALONS).forEach(t => {
+  [{ id: "tous", nom: "Toutes" }].concat(SALONS).forEach(t => {
     const b = document.createElement("button"); b.type = "button"; b.dataset.theme = t.id;
-    b.textContent = t.icone + " " + t.nom;
+    b.textContent = t.nom;
     b.classList.toggle("actif", t.id === hFiltre);
     b.addEventListener("click", () => {
       hFiltre = t.id;
@@ -1191,7 +1275,7 @@ function construireThemesHistoires() {
     z.appendChild(b);
   });
   const sel = $("hist-theme"); sel.innerHTML = "";
-  SALONS.forEach(t => { const o = document.createElement("option"); o.value = t.id; o.textContent = t.icone + " " + t.nom; sel.appendChild(o); });
+  SALONS.forEach(t => { const o = document.createElement("option"); o.value = t.id; o.textContent = t.nom; sel.appendChild(o); });
 }
 
 function ouvrirFormHistoire() {
@@ -1238,7 +1322,7 @@ function carteHistoire(h, reacs) {
   if (h.anonyme) { av.textContent = "?"; av.style.background = "#555"; } else { habillerAvatar(av, nom, h.auteur_id); }
   const qui = document.createElement("div"); qui.className = "hist-qui";
   const n = document.createElement("strong"); n.textContent = nom;
-  const d = document.createElement("span"); d.textContent = dateCourte(h.cree_le) + " · " + salon.icone + " " + salon.nom;
+  const d = document.createElement("span"); d.textContent = dateCourte(h.cree_le) + " · " + salon.nom;
   qui.appendChild(n); qui.appendChild(d);
   tete.appendChild(av); tete.appendChild(qui);
 
@@ -1256,12 +1340,12 @@ function carteHistoire(h, reacs) {
   }
 
   const pied = document.createElement("div"); pied.className = "pied";
-  [["coeur", "❤️", "J'aime"], ["idee", "💡", "Inspirant"]].forEach(([type, ic, nomType]) => {
+  [["coeur", ICO.coeur, "J'aime"], ["idee", ICO.idee, "Inspirant"]].forEach(([type, ic, nomType]) => {
     let nb = reacs.filter(x => x.type === type).length;
     let mien = reacs.some(x => x.type === type && x.membre_id === moi.id);
     const b = document.createElement("button"); b.type = "button"; b.className = "reac";
     const maj = () => {
-      b.textContent = ic + " " + nb;
+      b.innerHTML = ic + "<span>" + nb + "</span>";
       b.classList.toggle("oui", mien);
       b.setAttribute("aria-pressed", mien ? "true" : "false");
       b.setAttribute("aria-label", nomType + " (" + nb + ")");
@@ -1374,7 +1458,7 @@ function ouvrirLecture(s) {
   cacherVues();
   $("contenu").classList.remove("plein");
   $("nav").style.display = "flex";
-  $("lecture-pastille").textContent = s.icone;
+  poserIcone($("lecture-pastille"), s);
   $("lecture-titre").textContent = s.nom;
   $("lecture-desc").textContent = s.desc;
   $("vue-lecture").style.setProperty("--c", s.couleur);
@@ -1561,7 +1645,7 @@ async function ouvrirSalon(salon) {
   $("salon-desc").textContent = salon.prive ? (salon.est_groupe ? "Groupe privé" : "Discussion privée") : "Discussion entre membres";
   $("ajouter-membre").hidden = !(salon.prive && salon.est_groupe);
   const T = salon.prive ? "messages_prives" : "messages_salon", K = salon.prive ? "conversation_id" : "salon";
-  $("salon-pastille").textContent = salon.icone;
+  poserIcone($("salon-pastille"), salon);
   $("vue-salon").style.setProperty("--c", salon.couleur);
   $("erreur-chat").textContent = "";
   $("messages").innerHTML = '<div class="vide" id="aucun-message">Chargement des messages…</div>';
@@ -1764,7 +1848,7 @@ function remplirListe(zone, action, desc) {
     b.type = "button";
     b.style.setProperty("--c", s.couleur);
     b.innerHTML = '<span class="pastille" aria-hidden="true"></span><span class="texte"><h3></h3><span class="desc"></span></span><span class="fleche" aria-hidden="true">›</span>';
-    b.querySelector(".pastille").textContent = s.icone;
+    poserIcone(b.querySelector(".pastille"), s);
     b.querySelector("h3").textContent = s.nom;
     b.querySelector(".desc").textContent = desc || s.desc;
     b.addEventListener("click", () => {
@@ -1783,12 +1867,12 @@ document.querySelectorAll("#nav button").forEach(b => b.addEventListener("click"
 }));
 
 // Présentation sur l'écran de connexion : générée à partir de la liste des salons
-const OFFRE = SALONS.map(s => ({ icone: s.icone, nom: s.nom, desc: s.desc }))
-  .concat([{ icone: "💬", nom: "Messagerie en direct", desc: "Les messages apparaissent tout de suite chez les autres membres." }]);
+const OFFRE = SALONS.map(s => ({ id: s.id, icone: s.icone, nom: s.nom, desc: s.desc }))
+  .concat([{ id: "messages", icone: "💬", nom: "Messagerie en direct", desc: "Les messages apparaissent tout de suite chez les autres membres." }]);
 OFFRE.forEach(o => {
   const li = document.createElement("li");
   li.innerHTML = '<span class="ico" aria-hidden="true"></span><span><strong></strong><span class="d"></span></span>';
-  li.querySelector(".ico").textContent = o.icone;
+  poserIcone(li.querySelector(".ico"), o);
   li.querySelector("strong").textContent = o.nom;
   li.querySelector(".d").textContent = o.desc;
   $("offre-liste").appendChild(li);
