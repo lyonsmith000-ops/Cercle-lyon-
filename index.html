@@ -364,6 +364,46 @@ body.theme-salon { background: color-mix(in srgb, var(--c) 8%, var(--fond)); }
 .du-jour .art[data-salon]::before { content: none; display: none; }
 .du-jour .etiquette { color: var(--doux); }
 .nav button { font-size: .72rem; }
+/* ===== Style launcher : nuit violette, verre et lumière ===== */
+:root { --fond: #0c0a1d; --carte: #16142f; --bord: rgba(255, 255, 255, .1); --marine: #0c0a1d; --bulle: #1e1c3a; --encre: #f3efe6; --doux: #a9a5c0; --accent: #e2b97b; --sur-accent: #1a1530; --lien: #e8c898; --or: #e2b97b; color-scheme: dark; }
+body { background: radial-gradient(520px 420px at 90% 4%, rgba(120, 90, 210, .30), transparent 70%), radial-gradient(520px 520px at -10% 38%, rgba(70, 50, 160, .26), transparent 70%), #0c0a1d; background-attachment: fixed; }
+h1, h2, h3, .bienvenue h2 { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 700; }
+.barre { background: rgba(12, 10, 29, .82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255, 255, 255, .07); }
+.nom-site { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 700; }
+#deconnexion { border-color: rgba(255, 255, 255, .2); font-size: .85rem; }
+.bienvenue h2 { font-size: 1.9rem; }
+.bienvenue p { color: var(--doux); margin: 4px 0 20px; }
+.sec-titre { font-size: 1.2rem; margin: 26px 0 12px; }
+
+/* À la une */
+.du-jour .etiquette { display: none; }
+.du-jour .art[data-salon] { position: relative; overflow: hidden; padding: 20px 18px 8px; border-radius: 22px; border: 1px solid rgba(255, 255, 255, .12); background: radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--c) 55%, transparent), transparent 62%), linear-gradient(135deg, #2a2352, #17142f); box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--c) 70%, #000); }
+.du-jour .art[data-salon]::before { content: "À LA UNE"; display: inline-block; position: static; width: auto; height: auto; padding: 6px 12px; margin-bottom: 12px; border-radius: 999px; background: linear-gradient(90deg, #f6d9bf, #e9c3d6); color: #2a2146; font: 700 .72rem/1 system-ui, sans-serif; letter-spacing: .06em; }
+.du-jour .art[data-salon]::after { content: ""; position: absolute; right: 14px; top: 14px; width: 76px; height: 76px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f6d9bf'/%3E%3Cstop offset='1' stop-color='%23b9a6ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M52 8C34 10 20 22 16 40l-6 14 14-6c18-4 30-18 28-40z' fill='url(%23g)' fill-opacity='.35' stroke='url(%23g)' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M12 54 38 28' stroke='url(%23g)' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain; opacity: .9; }
+.du-jour .art[data-salon] h3 { font-size: 1.25rem; padding-right: 72px; }
+.du-jour .art[data-salon] p { font-size: 1.02rem; line-height: 1.65; }
+
+/* Catégories en tuiles */
+#liste-salons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#liste-salons .salon { flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 8px; min-height: 148px; padding: 18px 10px; border-radius: 22px; border: 1px solid rgba(255, 255, 255, .12); box-shadow: none; background: var(--couche-photo, linear-gradient(transparent, transparent)), radial-gradient(120% 110% at 0% 0%, color-mix(in srgb, var(--c) 78%, transparent), transparent 66%), linear-gradient(165deg, #211c4a, #131030); }
+#liste-salons .salon .texte { flex: none; }
+#liste-salons .salon .pastille { width: 58px; height: 58px; border-radius: 18px; font-size: 1.7rem; background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .25); box-shadow: 0 8px 18px -8px rgba(0, 0, 0, .5); }
+#liste-salons .salon .fleche { display: none; }
+#liste-salons .salon h3 { font-size: 1rem; line-height: 1.2; }
+#liste-salons .salon .desc { font-size: .85rem; margin-top: 2px; color: rgba(255, 255, 255, .75); }
+
+/* Reprise de lecture */
+.reprise { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 14px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, .1); color: inherit; font: inherit; cursor: pointer; background: linear-gradient(120deg, color-mix(in srgb, var(--c) 32%, #1a1738), #14122c); }
+.reprise .pastille { width: 52px; height: 52px; border-radius: 14px; font-size: 1.5rem; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .22); }
+.reprise .texte { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.reprise .t1 { color: #cdbcff; font-size: .85rem; }
+.reprise .t2 { font-size: 1.05rem; }
+.reprise .fleche { color: var(--doux); font-size: 1.6rem; }
+
+/* Barre du bas flottante */
+.nav { left: 10px; right: 10px; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); padding-bottom: 0; border-radius: 26px; background: rgba(22, 20, 48, .92); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 14px 34px -12px rgba(0, 0, 0, .7); }
+.nav button.actif { color: #f3d3b0; }
+.contenu { padding-bottom: 120px; }
 </style>
 </head>
 <body>
@@ -416,10 +456,15 @@ body.theme-salon { background: color-mix(in srgb, var(--c) 8%, var(--fond)); }
     <div id="vue-liste">
       <div class="bienvenue">
         <h2 id="titre-bienvenue">Bienvenue</h2>
-        <p>Choisis un salon pour lire et t'inspirer.</p>
+        <p>Découvrez les histoires du jour</p>
       </div>
       <div class="du-jour" id="du-jour"></div>
+      <h3 class="sec-titre">Catégories</h3>
       <div class="salons" id="liste-salons"></div>
+      <div id="reprise-zone" style="display:none">
+        <h3 class="sec-titre">Reprise de lecture</h3>
+        <button type="button" id="reprise" class="reprise"></button>
+      </div>
     </div>
     <div id="vue-lecture">
       <div class="salon-tete lecture-tete">
@@ -590,10 +635,23 @@ const NAVICO = {
   histoires: svg('<path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/>'),
   messages: ICO.messages, enregistres: ICO.signet, profil: ICO.user
 };
-function poserIcone(el, s) {
-  const k = ICO[s.id] || (s.prive ? (s.est_groupe ? ICO.groupe : ICO.user) : null);
-  if (k) el.innerHTML = k; else el.textContent = s.icone;
+function poserIcone(el, s) { el.textContent = s.icone; }
+/* Accueil : reprendre la lecture du dernier salon ouvert */
+function afficherReprise() {
+  let id = null;
+  try { id = localStorage.getItem("cls_dernier_salon"); } catch (e) {}
+  const sal = SALONS.find(x => x.id === id);
+  const zone = $("reprise-zone");
+  if (!sal) { zone.style.display = "none"; return; }
+  const b = $("reprise");
+  b.style.setProperty("--c", sal.couleur);
+  b.innerHTML = '<span class="pastille" aria-hidden="true"></span><span class="texte"><span class="t1">Reprendre la lecture</span><strong class="t2"></strong></span><span class="fleche" aria-hidden="true">›</span>';
+  poserIcone(b.querySelector(".pastille"), sal);
+  b.querySelector(".t2").textContent = sal.nom;
+  b.onclick = () => { history.pushState({ salon: sal.id, vue: "lire" }, "", "#" + sal.id); ouvrirLecture(sal); };
+  zone.style.display = "block";
 }
+
 /* Photos facultatives par salon : si le fichier images/<salon>.jpg existe sur le site, il sert de fond */
 SALONS.forEach(s => {
   const im = new Image();
@@ -1092,6 +1150,7 @@ function montrerOnglet(nom) {
   $("nav").style.display = "flex";
   $("vue-" + (nom === "accueil" ? "liste" : nom)).style.display = "block";
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("actif", b.dataset.onglet === nom));
+  if (nom === "accueil") afficherReprise();
   if (nom === "enregistres") rendreEnregistres();
   if (nom === "messages") chargerConversations();
   if (nom === "histoires") { fermerFormHistoire(); chargerHistoires(); }
@@ -1511,6 +1570,7 @@ function ouvrirLecture(s) {
   $("contenu").classList.remove("plein");
   $("nav").style.display = "flex";
   poserIcone($("lecture-pastille"), s);
+  try { localStorage.setItem("cls_dernier_salon", s.id); } catch (e) {}
   document.querySelector("#vue-lecture .lecture-tete").dataset.salon = s.id;
   $("lecture-titre").textContent = s.nom;
   $("lecture-desc").textContent = s.desc;
@@ -1904,7 +1964,7 @@ function remplirListe(zone, action, desc) {
     b.innerHTML = '<span class="pastille" aria-hidden="true"></span><span class="texte"><h3></h3><span class="desc"></span></span><span class="fleche" aria-hidden="true">›</span>';
     poserIcone(b.querySelector(".pastille"), s);
     b.querySelector("h3").textContent = s.nom;
-    b.querySelector(".desc").textContent = desc || s.desc;
+    b.querySelector(".desc").textContent = desc || (action === "lire" ? CONTENUS[s.id].length + " contenus" : s.desc);
     b.addEventListener("click", () => {
       history.pushState({ salon: s.id, vue: action }, "", "#" + s.id);
       if (action === "chat") ouvrirSalon(s); else ouvrirLecture(s);
