@@ -448,6 +448,28 @@ h1, h2, h3, .bienvenue h2 { font-family: system-ui, -apple-system, "Segoe UI", R
 .reglage.danger .reglage-nom { color: #ff9f97; }
 #profil-msg { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 30; margin: 0; min-height: 0; max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 999px; background: rgba(0, 0, 0, .9); color: #fff; font-size: .9rem; text-align: center; }
 #profil-msg:empty { display: none; }
+/* ===== Bibliothèque ===== */
+#vue-biblio { display: none; }
+[data-salon="biblio"] { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg stroke='white' stroke-opacity='.16' fill='none' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='16' y='40' width='16' height='60' rx='2'/%3E%3Crect x='36' y='30' width='16' height='70' rx='2'/%3E%3Crect x='56' y='46' width='16' height='54' rx='2'/%3E%3Cpath d='M10 100h70'/%3E%3Cpath d='M100 40c12-6 24-6 36 0v50c-12-6-24-6-36 0z'/%3E%3Cpath d='M118 40v50'/%3E%3C/g%3E%3C/svg%3E"); }
+.photo-biblio [data-salon="biblio"] { --photo: var(--photo-biblio); --couche-photo: linear-gradient(color-mix(in srgb, var(--c) 26%, transparent), color-mix(in srgb, var(--c) 26%, transparent)), linear-gradient(0deg, rgba(0, 0, 0, .68), rgba(0, 0, 0, .28)), var(--photo) var(--pos, center) / cover; }
+#liste-salons .salon:last-child:nth-child(odd) { grid-column: 1 / -1; min-height: 112px; }
+#biblio-ajouter { margin: 0 0 14px; }
+.biblio-form { margin-bottom: 18px; padding: 4px 16px 16px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 18px; background: rgba(255, 255, 255, .04); }
+.biblio-form label { display: block; margin: 14px 0 6px; font-weight: 600; font-size: .92rem; }
+.biblio-form input[type="file"] { width: 100%; font-size: .9rem; color: var(--doux); }
+.biblio-form .bouton { width: 100%; margin-top: 12px; }
+#biblio-recherche { margin-bottom: 14px; }
+.biblio-liste { display: flex; flex-direction: column; gap: 12px; }
+.livre { display: flex; gap: 14px; padding: 12px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 18px; background: rgba(255, 255, 255, .04); }
+.livre .couv { flex: none; display: grid; place-items: center; width: 64px; height: 88px; border-radius: 8px 12px 12px 8px; font-size: 1.8rem; box-shadow: inset 4px 0 0 rgba(255, 255, 255, .22), 0 10px 18px -10px rgba(0, 0, 0, .7); }
+.livre-info { flex: 1; min-width: 0; }
+.livre-info h3 { font-size: 1.02rem; line-height: 1.25; overflow-wrap: anywhere; }
+.livre-auteur { margin: 2px 0 0; color: var(--lien); font-size: .88rem; }
+.livre-meta { margin: 2px 0 0; color: var(--doux); font-size: .8rem; }
+.livre-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.btn-livre { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22); background: none; color: var(--encre); font: inherit; font-size: .85rem; text-decoration: none; cursor: pointer; }
+.btn-livre.lire { background: var(--accent); border-color: var(--accent); color: var(--sur-accent); font-weight: 700; }
+.btn-livre.danger { border-color: rgba(255, 140, 130, .5); }
 </style>
 </head>
 <body>
@@ -519,6 +541,28 @@ h1, h2, h3, .bienvenue h2 { font-family: system-ui, -apple-system, "Segoe UI", R
       <input type="search" id="lecture-recherche" class="champ-recherche" placeholder="Rechercher dans ce salon" autocomplete="off" aria-label="Rechercher dans ce salon">
       <p class="vide-liste" id="lecture-vide" style="display:none">Aucun contenu ne correspond à ta recherche.</p>
       <div class="articles" id="lecture-liste"></div>
+    </div>
+    <div id="vue-biblio">
+      <div class="salon-tete lecture-tete" data-salon="biblio">
+        <button class="retour" id="retour-biblio" type="button" aria-label="Retour aux salons">←</button>
+        <span class="pastille" aria-hidden="true">📕</span>
+        <div class="infos"><h2>Bibliothèque</h2><p>Livres à lire et à télécharger (PDF)</p></div>
+      </div>
+      <button id="biblio-ajouter" class="bouton" type="button" hidden>Ajouter un livre</button>
+      <div id="biblio-form" class="biblio-form" hidden>
+        <label for="biblio-fichier">Fichier PDF (50 Mo maximum)</label>
+        <input id="biblio-fichier" type="file" accept="application/pdf,.pdf">
+        <label for="biblio-titre">Titre</label>
+        <input id="biblio-titre" type="text" maxlength="200" autocomplete="off">
+        <label for="biblio-auteur">Auteur (facultatif)</label>
+        <input id="biblio-auteur" type="text" maxlength="200" autocomplete="off">
+        <div id="biblio-msg" class="message" role="status"></div>
+        <button id="biblio-envoyer" class="bouton" type="button">Envoyer le livre</button>
+        <button id="biblio-annuler" class="bouton sec" type="button">Annuler</button>
+      </div>
+      <input type="search" id="biblio-recherche" class="champ-recherche" placeholder="Rechercher un livre" autocomplete="off" aria-label="Rechercher un livre">
+      <p class="vide-liste" id="biblio-vide" style="display:none">Aucun livre pour l'instant.</p>
+      <div class="biblio-liste" id="biblio-liste"></div>
     </div>
     <div id="vue-messages">
       <div class="bienvenue"><h2>Messages</h2><p>Discussions privées entre membres. L'administrateur peut en consulter pour modérer (signalement, sécurité).</p></div>
@@ -829,6 +873,154 @@ function brancherReglages() {
   }));
 }
 
+/* Bibliothèque : livres PDF (envoi réservé à l'administrateur) */
+const COULEUR_BIBLIO = "#2b6cb0";
+let biblioAdmin = false;
+function urlLivre(chemin) { return SUPABASE_URL + "/storage/v1/object/public/bibliotheque/" + encodeURIComponent(chemin); }
+function tailleLisible(o) {
+  if (!o) return "";
+  return o >= 1048576 ? (o / 1048576).toFixed(1).replace(".", ",") + " Mo" : Math.max(1, Math.round(o / 1024)) + " Ko";
+}
+function ouvrirBibliotheque() {
+  quitterSalon();
+  cacherVues();
+  $("contenu").classList.remove("plein");
+  $("nav").style.display = "flex";
+  $("vue-biblio").style.setProperty("--c", COULEUR_BIBLIO);
+  document.body.style.setProperty("--c", COULEUR_BIBLIO);
+  document.body.classList.add("theme-salon");
+  fermerFormBiblio();
+  $("biblio-recherche").value = "";
+  $("vue-biblio").style.display = "block";
+  window.scrollTo(0, 0);
+  chargerBibliotheque();
+}
+function fermerFormBiblio() {
+  $("biblio-form").hidden = true;
+  $("biblio-msg").textContent = "";
+  $("biblio-ajouter").style.display = "";
+}
+async function chargerBibliotheque() {
+  const z = $("biblio-liste"), vide = $("biblio-vide");
+  vide.style.display = "none";
+  z.innerHTML = '<p class="vide-liste">Chargement…</p>';
+  const [rep, adm] = await Promise.all([
+    db.from("livres").select("id,titre,auteur,chemin,taille,cree_le").order("cree_le", { ascending: false }).limit(300),
+    db.rpc("est_admin")
+  ]);
+  biblioAdmin = !!(adm && adm.data === true);
+  $("biblio-ajouter").hidden = !biblioAdmin;
+  z.innerHTML = "";
+  if (rep.error) {
+    vide.textContent = "Impossible de charger la bibliothèque pour l'instant. Réessaie dans un instant.";
+    vide.style.display = "block";
+    return;
+  }
+  vide.textContent = "Aucun livre pour l'instant.";
+  (rep.data || []).forEach(l => z.appendChild(carteLivre(l)));
+  filtrerBiblio();
+}
+function carteLivre(l) {
+  const el = document.createElement("div");
+  el.className = "livre";
+  el.dataset.recherche = (l.titre + " " + (l.auteur || ""));
+  let h = 0; for (const ch of l.titre) h = (h * 31 + ch.charCodeAt(0)) % 360;
+  const couv = document.createElement("div");
+  couv.className = "couv"; couv.setAttribute("aria-hidden", "true");
+  couv.style.background = "linear-gradient(160deg, hsl(" + h + " 55% 40%), hsl(" + ((h + 40) % 360) + " 55% 20%))";
+  couv.textContent = "📕";
+  const info = document.createElement("div");
+  info.className = "livre-info";
+  const t = document.createElement("h3"); t.textContent = l.titre;
+  info.appendChild(t);
+  if (l.auteur) { const a = document.createElement("p"); a.className = "livre-auteur"; a.textContent = l.auteur; info.appendChild(a); }
+  const meta = document.createElement("p"); meta.className = "livre-meta";
+  meta.textContent = ["PDF", tailleLisible(l.taille)].filter(Boolean).join(" · ");
+  info.appendChild(meta);
+  const act = document.createElement("div");
+  act.className = "livre-actions";
+  const lire = document.createElement("a");
+  lire.className = "btn-livre lire"; lire.textContent = "Lire";
+  lire.href = urlLivre(l.chemin); lire.target = "_blank"; lire.rel = "noopener";
+  const tel = document.createElement("a");
+  tel.className = "btn-livre"; tel.textContent = "⬇ Télécharger";
+  tel.href = urlLivre(l.chemin) + "?download=" + encodeURIComponent(l.titre + ".pdf");
+  tel.rel = "noopener";
+  act.appendChild(lire); act.appendChild(tel);
+  if (biblioAdmin) {
+    const sup = document.createElement("button");
+    sup.type = "button"; sup.className = "btn-livre danger"; sup.textContent = "🗑️"; sup.setAttribute("aria-label", "Supprimer ce livre");
+    sup.addEventListener("click", async () => {
+      if (!confirm("Supprimer « " + l.titre + " » de la bibliothèque ?")) return;
+      sup.disabled = true;
+      const { error } = await db.from("livres").delete().eq("id", l.id);
+      if (error) { sup.disabled = false; return; }
+      db.storage.from("bibliotheque").remove([l.chemin]).catch(() => {});
+      el.remove(); filtrerBiblio();
+    });
+    act.appendChild(sup);
+  }
+  info.appendChild(act);
+  el.appendChild(couv); el.appendChild(info);
+  return el;
+}
+function filtrerBiblio() {
+  const q = norm($("biblio-recherche").value.trim());
+  let n = 0;
+  document.querySelectorAll("#biblio-liste .livre").forEach(e => {
+    const ok = !q || norm(e.dataset.recherche).includes(q);
+    e.style.display = ok ? "" : "none";
+    if (ok) n++;
+  });
+  $("biblio-vide").style.display = n ? "none" : "block";
+}
+function brancherBiblio() {
+  $("biblio-recherche").addEventListener("input", filtrerBiblio);
+  $("biblio-ajouter").addEventListener("click", () => {
+    $("biblio-form").hidden = false;
+    $("biblio-ajouter").style.display = "none";
+    $("biblio-msg").textContent = "";
+  });
+  $("biblio-annuler").addEventListener("click", fermerFormBiblio);
+  $("biblio-fichier").addEventListener("change", () => {
+    const f = $("biblio-fichier").files[0];
+    if (f && !$("biblio-titre").value.trim()) {
+      $("biblio-titre").value = f.name.replace(/\.pdf$/i, "").replace(/[_]+/g, " ").trim().slice(0, 200);
+    }
+  });
+  $("biblio-envoyer").addEventListener("click", async () => {
+    const msg = $("biblio-msg"), b = $("biblio-envoyer");
+    const f = $("biblio-fichier").files[0];
+    const titre = $("biblio-titre").value.trim(), auteur = $("biblio-auteur").value.trim();
+    msg.style.color = "var(--erreur)";
+    if (!f) { msg.textContent = "Choisis d'abord un fichier PDF."; return; }
+    if (f.type !== "application/pdf" && !/\.pdf$/i.test(f.name)) { msg.textContent = "Le fichier doit être un PDF."; return; }
+    if (f.size > 52428800) { msg.textContent = "Ce fichier dépasse 50 Mo."; return; }
+    if (!titre) { msg.textContent = "Ajoute un titre."; return; }
+    b.disabled = true; b.textContent = "Envoi en cours…"; msg.style.color = "var(--doux)"; msg.textContent = "Envoi du livre, patiente un instant…";
+    const base = f.name.replace(/\.pdf$/i, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "livre";
+    const chemin = Date.now() + "-" + base + ".pdf";
+    const up = await db.storage.from("bibliotheque").upload(chemin, f, { contentType: "application/pdf", upsert: false });
+    if (up.error) { b.disabled = false; b.textContent = "Envoyer le livre"; msg.style.color = "var(--erreur)"; msg.textContent = "Envoi impossible : " + up.error.message; return; }
+    const ins = await db.from("livres").insert({ titre: titre, auteur: auteur || null, chemin: chemin, taille: f.size });
+    b.disabled = false; b.textContent = "Envoyer le livre";
+    if (ins.error) {
+      db.storage.from("bibliotheque").remove([chemin]).catch(() => {});
+      msg.style.color = "var(--erreur)"; msg.textContent = "Livre non enregistré : " + ins.error.message; return;
+    }
+    $("biblio-fichier").value = ""; $("biblio-titre").value = ""; $("biblio-auteur").value = "";
+    fermerFormBiblio();
+    chargerBibliotheque();
+  });
+  // tuile sur l'accueil
+  const b = document.createElement("button");
+  b.className = "salon"; b.type = "button"; b.dataset.salon = "biblio";
+  b.style.setProperty("--c", COULEUR_BIBLIO);
+  b.innerHTML = '<span class="pastille" aria-hidden="true">📕</span><span class="texte"><h3>Bibliothèque</h3><span class="desc">Livres PDF à lire</span></span><span class="fleche" aria-hidden="true">›</span>';
+  b.addEventListener("click", () => { history.pushState({ vue: "biblio" }, "", "#bibliotheque"); ouvrirBibliotheque(); });
+  $("liste-salons").appendChild(b);
+}
+
 /* Accueil : reprendre la lecture du dernier salon ouvert */
 function afficherReprise() {
   let id = null;
@@ -852,7 +1044,7 @@ const PHOTOS = {
   quotidien: ["quotidien.jpg"],
   histoires: ["Histoire marquante.jpg"]
 };
-SALONS.forEach(sal => {
+SALONS.concat([{ id: "biblio" }]).forEach(sal => {
   const noms = [];
   (PHOTOS[sal.id] || []).concat([sal.id + ".jpg", "images/" + sal.id + ".jpg"]).forEach(n => {
     [n.normalize("NFC"), n.normalize("NFD")].forEach(v => { if (!noms.includes(v)) noms.push(v); });
@@ -1351,7 +1543,7 @@ function quitterSalon() {
   salonActuel = null;
 }
 
-const VUES = ["vue-liste", "vue-histoires", "vue-messages", "vue-lecture", "vue-enregistres", "vue-recherche", "vue-salon", "vue-profil"];
+const VUES = ["vue-liste", "vue-histoires", "vue-messages", "vue-lecture", "vue-biblio", "vue-enregistres", "vue-recherche", "vue-salon", "vue-profil"];
 function cacherVues() { document.body.classList.remove("theme-salon"); VUES.forEach(v => { $(v).style.display = "none"; }); }
 
 function montrerOnglet(nom) {
@@ -2195,7 +2387,12 @@ window.addEventListener("popstate", (e) => {
   const st = e.state || {};
   const s = st.salon ? SALONS.find(x => x.id === st.salon) : null;
   const c = st.vue === "conv" ? convCache[st.conv] : null;
+  if (st.vue === "biblio") { ouvrirBibliotheque(); return; }
   if (c) ouvrirSalon(c); else if (s && st.vue === "chat") ouvrirSalon(s); else if (s) ouvrirLecture(s); else montrerListe();
+});
+
+$("retour-biblio").addEventListener("click", () => {
+  if (history.state && history.state.vue === "biblio") history.back(); else montrerListe();
 });
 
 $("retour-lecture").addEventListener("click", () => {
@@ -2696,6 +2893,7 @@ db.auth.getSession().then(({ data }) => {
 
 brancherBarreChoix();
 brancherReglages();
+brancherBiblio();
 </script>
 </body>
 </html>
